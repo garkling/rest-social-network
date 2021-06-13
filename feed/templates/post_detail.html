@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+{% load static %}
+
+{% block title %}Post{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/feed_style.css' %}">
+
+{% if request.user.pk == post.get_owner_pk %}
+    <!-- Modal -->
+    <div class="modal fade" id="del-confirm-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Delete post?</h5>
+            <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <div class="modal-footer">
+              <form action="{% url 'feed:post-delete' post.pk  %}" data-method="DELETE">
+                  <button type="submit" class="btn btn-danger" value="Delete">Yes</button>
+              </form>
+              <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+{% endif %}
+
+<div class="container">
+<div class="row justify-content-center">
+<div class="col-8">
+    <div class="social-user-box">
+
+        {% if request.user.pk == post.get_owner_pk %}
+            <!-- Delete dropdown notification -->
+            <div class="pull-right social-action dropdown">
+                <button type="button" class="btn"
+                            data-toggle="dropdown" aria-haspopup="false" aria-expanded="false">
+                    <i class="fa fa-angle-down"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="btn" id="edit-btn" role="button"><i class="bi bi-pencil"></i> Edit</a></li>
+                    <li><a class="btn" role="button" data-toggle="modal" data-target="#del-confirm-modal"><i class="bi bi-trash"></i> Delete</a></li>
+                </ul>
+            </div>
+        {% endif %}
+
+        <div class="user-avatar">
+            <a href="#" class="pull-left">
+                <img src="{% static 'img/avatar-icon-images-4.jpg' %}" alt="image">
+            </a>
+            <div class='media'>
+                <a href="{% url 'profiles:profile' post.author.id %}">
+                    {{ post.get_author|default:post.get_author_username }}
+                </a>
+            </div>
+            <small class="text-muted">{{ post.pub_date }}</small>
+        </div>
+        <div id="post-content">
+            <div class="user-body">
+                <h5>{{ post.title }}</h5>
+                <p>{{ post.content }}</p>
+            </div>
+            <div class="social-footer">
+                <div class="btn-group" id="rate-buttons">
+                    <button onclick="registerRate(this, {{ post.pk }}, 1)" class="btn btn-white btn-xs" id='like-button'>
+                        {% if request.user.id in post.who_liked %}
+                            <i class="bi bi-hand-thumbs-up-fill" id="like-count-{{ post.pk }}">{{ post.get_likes }}</i>
+                        {% else %}
+                            <i class="bi bi-hand-thumbs-up" id="like-count-{{ post.pk }}">{{ post.get_likes }}</i>
+                        {% endif %}
+                    </button>
+                    <button onclick="registerRate(this, {{ post.pk }}, 0);" class="btn btn-white btn-xs" id="dislike-button">
+                        {% if request.user.id in post.who_disliked %}
+                            <i class="bi bi-hand-thumbs-down-fill" id="dislike-count-{{ post.pk }}">{{ post.get_dislikes }}</i>
+                        {% else %}
+                            <i class="bi bi-hand-thumbs-down" id="dislike-count-{{ post.pk }}">{{ post.get_dislikes }}</i>
+                        {% endif %}
+                    </button>
+                </div>
+            </div>
+            </div>
+            {% if request.user.pk == post.get_owner_pk %}
+                <!-- Edit form -->
+                <div class="user-body" id="post-update-form">
+                    <form action="{% url 'feed:post-update' post.pk %}" data-method="PUT">
+                        {% render_form serializer %}
+                        <div class="clearfix">
+                            <div class="pull-right">
+                                <button type='button' class="btn btn-danger" id="edit-cancel">Cancel</button>
+                                <button type="submit" class="btn btn-primary" value="Edit">Edit</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            {% endif %}
+
+    </div>
+
+</div>
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        window.drf = {
+        csrfHeaderName: "{{ csrf_header_name|default:'X-CSRFToken' }}",
+        csrfToken: "{% if request %}{{ csrf_token }}{% endif %}"
+        };
+    </script>
+    <script src="{% static 'js/ajax-form.js' %}"></script>
+    <script src="{% static 'js/register_rates.js' %}"></script>
+    <script src="{% static 'js/post_form_transition.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+          $('form').ajaxForm();
+        });
+    </script>
+{% endblock %}

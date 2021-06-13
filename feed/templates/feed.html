@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+{% load static %}
+
+{% block title %}Feed{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/feed_style.css' %}">
+
+    <div class="container">
+    <div class="col-md-7">
+         <div class="social-user-box">
+            <div class="user-body">
+                <form action="{% url 'feed:post-create' %}" method="POST">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        {% render_form serializer %}
+                    </div>
+                    <div class="clearfix">
+                        <button class="btn btn-primary pull-right" type="submit" id="post-button" disabled>
+                            <i class="fa fa-pencil fa-fw"></i>
+                            Post
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        {% for post in feed %}
+            {% include 'post_template.html' %}
+        {% endfor %}
+
+    </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script src="{% static 'js/manage_post_button.js' %}"></script>
+{% endblock %}
+

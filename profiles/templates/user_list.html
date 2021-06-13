@@ -1,0 +1,34 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+{% load static %}
+{% load profile_tags %}
+
+{% block title %}Users{% endblock %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'css/user_style.css' %}">
+
+<div class="container">
+<div class="col-md-7">
+
+    {% for user in user_list %}
+    <div class="social-user-box position-relative">
+        <div class="user-avatar">
+                <a href="#" class="pull-left">
+                    <img src="{% static 'img/avatar-icon-images-4.jpg' %}" alt="image">
+                </a>
+                <div class='media'>
+                    {{ user.get_full_name|default:user.username }}
+                </div>
+                <i class="bi bi-phone"></i><small class="text-muted">{{ user.last_login|convert_time }}</small>
+        </div>
+        <div class="user-body"></div>
+        <a href="{% url 'profiles:profile' user.pk %}" class="stretched-link"></a>
+    </div>
+    {% endfor %}
+</div>
+</div>
+{% endblock %}
+
+{% block script %}
+{% endblock %}

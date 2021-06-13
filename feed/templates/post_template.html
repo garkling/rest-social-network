@@ -1,0 +1,45 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <link rel="stylesheet" href="{% static 'css/feed_style.css' %}">
+
+    <div class="social-user-box">
+    <div class="user-avatar">
+        <a href="#" class="pull-left">
+            <img src="{% static 'img/avatar-icon-images-4.jpg' %}" alt="image">
+        </a>
+        <div class='media'>
+            <a href="{% url 'profiles:profile' post.author.id %}">
+                {{ post.get_author|default:post.get_author_username }}
+            </a>
+        </div>
+        <small class="text-muted">{{ post.pub_date }}</small>
+    </div>
+    <div class="user-body position-relative">
+        <h5>{{ post.title }}</h5>
+        <p>{{ post.content }}</p>
+        <a href="{% url 'feed:post' post.pk %}" class="stretched-link"></a>
+    </div>
+    <div class="social-footer">
+        <div class="btn-group" id="rate-buttons">
+            <button onclick="registerRate(this, {{ post.pk }}, 1)" class="btn btn-white btn-xs" id='like-button'>
+                {% if request.user.id in post.who_liked %}
+                    <i class="bi bi-hand-thumbs-up-fill" id="like-count-{{ post.pk }}">{{ post.get_likes }}</i>
+                {% else %}
+                    <i class="bi bi-hand-thumbs-up" id="like-count-{{ post.pk }}">{{ post.get_likes }}</i>
+                {% endif %}
+            </button>
+            <button onclick="registerRate(this, {{ post.pk }}, 0)" class="btn btn-white btn-xs" id="dislike-button">
+                {% if request.user.id in post.who_disliked %}
+                    <i class="bi bi-hand-thumbs-down-fill" id="dislike-count-{{ post.pk }}">{{ post.get_dislikes }}</i>
+                {% else %}
+                    <i class="bi bi-hand-thumbs-down" id="dislike-count-{{ post.pk }}">{{ post.get_dislikes }}</i>
+                {% endif %}
+            </button>
+        </div>
+    </div>
+    </div>
+</body>
+<script src="{% static 'js/register_rates.js' %}"></script>

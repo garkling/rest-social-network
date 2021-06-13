@@ -1,0 +1,75 @@
+{% load rest_framework %}
+
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <!-- Modal -->
+    <div class="modal fade" id="del-confirm-modal" tabindex="-1" role="dialog" aria-hidden="true">
+      <div class="modal-dialog" role="document">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title">Are you sure to delete your account?</h5>
+            <button type="button" class="close btn" data-dismiss="modal" aria-label="Close">
+              <i class="bi bi-x-lg"></i>
+            </button>
+          </div>
+          <div class="modal-footer">
+              <form action="{% url 'profiles:profile-delete' profile.pk  %}" data-method="DELETE">
+                  <button type="submit" class="btn btn-danger" value="Delete">Yes</button>
+              </form>
+              <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="edit">
+        <h3>Edit profile</h3>
+        <div>
+            <form action="{% url 'profiles:profile-update' profile.pk %}" data-method="PUT">
+                <div class="col-md-7 auto-margin">
+                    {% render_form serializer %}
+                    <div class="clearfix">
+                        <div class="pull-right">
+                            <button class="btn btn-primary" type="submit" value="Update">Save</button>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+        </div>
+    </div>
+    <hr>
+    <div id="change-password">
+        <h3>Change password</h3>
+        <form class='needs-validation' action="{% url 'profiles:password-update' profile.pk %}" data-method="PUT" novalidate>
+            <div class="col-md-7 auto-margin form-group">
+                <label for="old-pwd">Current password</label>
+                <input type="password" class="form-control" id="old-pwd">
+
+                <label for="password1">New password</label>
+                <input type="password" class="form-control" id="password1">
+
+                <label for="password2">Repeat password</label>
+                <input type="password" class="form-control" id="password2">
+                <div class="clearfix">
+                    <div class="pull-right">
+                        <button class="btn btn-primary" type="submit" value="Update">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+    <hr>
+    <div id="delete-profile">
+        <h3>Delete account</h3>
+        <div class="col-md-7 auto-margin">
+            <div class="clearfix">
+                <button class="btn btn-danger pull-right" type="button" data-toggle="modal"
+                        data-target="#del-confirm-modal">Delete account
+                </button>
+            </div>
+        </div>
+    </div>
+</body>
+</html>

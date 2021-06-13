@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<body>
+    <div class="nav">
+        <ul class="nav nav-tabs">
+            <li class="nav-item">
+                <a class='nav-link active' href="#info" data-toggle="tab">Info</a>
+            </li>
+            <li class="nav-item">
+                <a class='nav-link' href="#wall" data-toggle="tab">Wall</a>
+            </li>
+        </ul>
+    </div>
+
+    <div class="tab-content">
+        <div class="tab-pane active" id="info">
+            <p>
+                <span class="bi bi-person-fill"></span>
+                <text><small>@</small>{{ profile.username }}</text>
+            </p>
+            {% if profile.email %}
+            <p>
+                <span class="bi bi-envelope-fill"></span>
+                <text>{{ profile.email }}</text>
+            </p>
+            {% endif %}
+            {% if profile.bio %}
+            <p>
+                <span class="bi bi-chat-fill"></span>
+                <text>{{ profile.bio }}</text>
+            </p>
+            {% endif %}
+        </div>
+        <div class="tab-pane" id="wall">
+            {% if profile.posts.all %}
+                {% for post in profile.posts.all %}
+                    {% include 'post_template.html' %}
+
+                {% endfor %}
+            {% else %}
+                <text>There are no posts yet</text>
+            {% endif %}
+        </div>
+    </div>
+</body>

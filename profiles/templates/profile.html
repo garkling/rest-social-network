@@ -1,0 +1,84 @@
+{% extends 'base.html' %}
+{% load rest_framework %}
+{% load static %}
+{% load profile_tags %}
+
+{% block title %}
+    {{ profile.first_name|default:profile.username }}`s profile
+{% endblock %}
+
+{% block content %}
+    <link rel="stylesheet" href="{% static 'css/profile_style.css' %}">
+
+    {% has_perms request profile as permissions %}
+
+    <div class="container">
+        <div class="view-account">
+            <section class="module">
+                <div class="module-inner">
+                    <div class="side-bar">
+                        <div class="user-info">
+                            <img class="img-profile img-circle img-responsive center-block" src="{% static 'img/avatar-icon-images-4.jpg' %}" alt="">
+                            <ul class="meta list list-unstyled">
+                                <li class="name">{{ profile.get_full_name|default:profile.username }}</li>
+                                <li class="activity"><span class="bi bi-phone">{{ profile.last_login|convert_time }}</span></li>
+                            </ul>
+                        </div>
+                        {% if permissions %}
+                        <nav class="side-menu">
+                            <ul class="nav" id="sidebar">
+                                <li class="nav-item active">
+                                    <a href="#profile" class="btn" data-toggle="tab"><span class="bi bi-person-fill"></span> Profile
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="#settings" class="btn" data-toggle="tab"><span class="bi bi-gear"></span> Settings
+                                    </a>
+                                </li>
+                                <li class="nav-item">
+                                    <a href="{% url 'rest_framework:logout' %}" class="btn">
+                                        <span class="bi bi-arrow-bar-left"></span> Logout
+                                    </a>
+                                </li>
+                            </ul>
+                        </nav>
+                        {% endif %}
+                    </div>
+                    <div class="content-panel">
+                        <div class="tab-content">
+                            <div class="tab-pane active" id="profile">
+                                {% include 'info_tab.html' %}
+                            </div>
+                            {% if permissions %}
+                            <div class="tab-pane" id="settings">
+                                {% include 'settings_tab.html' %}
+                            </div>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        window.drf = {
+        csrfHeaderName: "{{ csrf_header_name|default:'X-CSRFToken' }}",
+        csrfToken: "{% if request %}{{ csrf_token }}{% endif %}"
+        };
+    </script>
+    <script src="{% static 'js/ajax-form.js' %}"></script>
+    <script>
+        $(document).ready(function() {
+          $('form').ajaxForm();
+        });
+    </script>
+        <script>
+        $('#sidebar > .nav-item').click( function (e) {
+        	$('.nav').children('.nav-item').removeClass('active')
+        	$(this).toggleClass('active')
+        })
+    </script>
+{% endblock %}
